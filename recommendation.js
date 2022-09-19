@@ -39,7 +39,7 @@ function getKeyWord2(xml) {
   var keywordList = [];
   var parser = new DOMParser();
   var xmlDoc = parser.parseFromString(xml, "text/xml");
-  var keyword = xmlDoc.getElementsByTagName("TITLE");
+  var keyword = xmlDoc.getElementsByTagName("keyword");
   for (var i = 0; i < keyword.length; i++) {
     txt += keyword[i].childNodes[0].nodeValue + ",";
   }
