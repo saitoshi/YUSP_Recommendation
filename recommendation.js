@@ -36,6 +36,7 @@ function compareKeyWord(xml, keywordA, keywordB) {
 }
 
 function getKeyWord2(xml) {
+  var keywordList = [];
   var parser = new DOMParser();
   var xmlDoc = parser.parseFromString(xml, "text/xml");
   var keyword = xmlDoc.getElementsByTagName("TITLE");
