@@ -1,6 +1,5 @@
 function loadXMLDoc() {
-  var xmlFile =
-    "https://raw.githubusercontent.com/olayenca/externals/master/XMLParse.xml";
+  var xmlFile = "https://www.cataloghouse.co.jp/cataloghouse_product.xml";
   var xmlhttp = new XMLHttpRequest();
 
   xmlhttp.open("GET", xmlFile, true);
