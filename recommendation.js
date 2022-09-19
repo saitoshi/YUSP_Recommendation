@@ -46,4 +46,5 @@ function getKeyWord2(xml) {
   keywordList.push(txt);
   //keyWordList = _.uniq(keywordList);
   console.log(keywordList);
+  document.getElementById("demo").innerHTML = keywordList;
 }
