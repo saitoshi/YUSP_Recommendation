@@ -10,9 +10,35 @@
     <button type="button" onclick="loadXMLDoc()">
         Get my CD collection</button>
     <p id="demo"></p>
+    <form id="myForm">
+        <input type="file" id="csvFile" accept=".csv" />
+        <br />
+        <input type="submit" value="Submit" />
+    </form>
+    <hr />
+    <form id="myInput">
+        <label for="inputList">キーワードリスト:</label>
+        <input type="text" id="inputList"><br />
+        <input type="submit" value="Submit">
+    </form>
 </body>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.4/underscore-umd-min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js" type="text/javascript"></script>
+<script>
+    const myInput = document.getElementById("myInput");
+    const inputList = document.getElementById("inputList");
+
+    var inputArray = [];
+
+    myInput.addEventListener("submit", () => {
+        const inputKeyword = inputList;
+        inputArray = inputKeyWord.split(',');
+        console.log(inputArray);
+    });
+
+</script>
 <script src="recommendation.js"></script>
+<script src="keywordCSVTest.js"></script>
+
 
 </html>
