@@ -40,26 +40,40 @@ myForm.addEventListener("submit", function (e) {
     const data = csvToArray(text);
 
     console.log(data);
-    /** 
-    nameData = _.pluck(data, "name");
-    document.write(JSON.stringify(nameData));
-    //console.log(typeof nameData);
-    const nameArray = Object.values(nameData);
-    console.log(nameArray);
-    for (var i = 0; i < nameArray.length; i++) {
-      keyData.push(nameArray[i]);
-      console.log(keyData);
-    }
-    */
-    let keyData,
-      keyCount = keyWordCount(data);
-    document.write(JSON.stringify(keyData));
+    let keyCount = keyWordCount(data);
     document.write(JSON.stringify(keyCount));
   };
 
   reader.readAsText(input);
 });
 
+function keywordExtract(arr) {
+  let keywordList = ["name", "role"];
+  var keyList = [];
+  var nameArray;
+  for (var i = 0; i < keywordList.length; i++) {
+    let nameData = _.pluck(arr, keywordList[i]);
+    nameArray = Object.values(nameData);
+    for (var j = 0; j < nameArray.length; j++) {
+      keyList.push(nameArray[j]);
+      console.log(keyList);
+    }
+  }
+  return keyList;
+}
+
+function keywordCount(arr) {
+  var count = {};
+  for (const element of arr) {
+    if (count[element]) {
+      count[element] += 1;
+    } else {
+      count[element] = 1;
+    }
+  }
+
+  return count;
+}
 function keyWordCount(arr) {
   let keywordList = ["name", "role"];
   var keywordCount = {};
@@ -73,7 +87,6 @@ function keyWordCount(arr) {
       console.log(keyList);
     }
   }
-
   for (const element of keyList) {
     if (keywordCount[element]) {
       keywordCount[element] += 1;
@@ -82,5 +95,5 @@ function keyWordCount(arr) {
     }
   }
 
-  return keyList, keywordCount;
+  return keywordCount;
 }
