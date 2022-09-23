@@ -1,7 +1,3 @@
-//@fileName: keywordCSV
-//@description: CSVファイルを読み込み、それをarrayにまとめる
-//
-
 const myForm = document.getElementById("myForm");
 const csvFile = document.getElementById("csvFile");
 
@@ -9,7 +5,9 @@ function csvToArray(str, delimiter = ",") {
   // slice from start of text to the first \n index
   // use split to create an array from string by delimiter
   const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
-
+  for (var i = 0; i < headers.length; i++) {
+    headers[i] = headers[i].replace(/"/g, "");
+  }
   // slice from \n index + 1 to the end of the text
   // use split to create an array of each csv value row
   const rows = str.slice(str.indexOf("\n") + 1).split("\n");
@@ -34,62 +32,55 @@ function csvToArray(str, delimiter = ",") {
 
 myForm.addEventListener("submit", function (e) {
   e.preventDefault();
-  keywordList = ["name", "role"];
   const input = csvFile.files[0];
   const reader = new FileReader();
-  const count = {};
 
   reader.onload = function (e) {
     const text = e.target.result;
     const data = csvToArray(text);
-    const countList = keyWordCount(data, keywordList);
 
-    for (const element of countList) {
-      if (count[element]) {
-        count[element] += 1;
-      } else {
-        count[element] = 1;
-      }
+    console.log(data);
+    /** 
+    nameData = _.pluck(data, "name");
+    document.write(JSON.stringify(nameData));
+    //console.log(typeof nameData);
+    const nameArray = Object.values(nameData);
+    console.log(nameArray);
+    for (var i = 0; i < nameArray.length; i++) {
+      keyData.push(nameArray[i]);
+      console.log(keyData);
     }
-    document.write(JSON.stringify(countList));
-    document.write(JSON.stringify(count));
-    console.log(count);
+    */
+    let keyData,
+      keyCount = keyWordCount(data);
+    document.write(JSON.stringify(keyData));
+    document.write(JSON.stringify(keyCount));
   };
 
   reader.readAsText(input);
 });
 
-//
-function keyWordCount(arr, keywordList) {
-  var sortedList = {};
+function keyWordCount(arr) {
+  let keywordList = ["name", "role"];
+  var keywordCount = {};
   var keyList = [];
-  var name;
-  var role;
-  var j = 0;
-  /**
+  var nameArray;
   for (var i = 0; i < keywordList.length; i++) {
-    console.log(keywordList[i]);
-    sortedList += _.pluck(arr, keywordList[i]);
-  }
-  console.log(sortedList);
-  return sortedList; 
-   //console.log(sortedList);
-  for (var j = 0; j < keywordList.length; j++) {
-    sortedList[keywordList[j]] = _.pluck(arr, keywordList[j]);
-  }*/
-  for (var i = 0; i < keywordList.length; i++) {
-    sortedList[keywordList[i]] = [];
-    sortedList[keywordList[i]] = _.pluck(arr, keywordList[i]);
+    let nameData = _.pluck(arr, keywordList[i]);
+    nameArray = Object.values(nameData);
+    for (var j = 0; j < nameArray.length; j++) {
+      keyList.push(nameArray[j]);
+      console.log(keyList);
+    }
   }
 
-  var j = 0;
-  console.log(keywordList[0]);
-  name = sortedList[keywordList[0]];
-  role = sortedList[keywordList[1]];
-  console.log(name);
-  console.log(role);
+  for (const element of keyList) {
+    if (keywordCount[element]) {
+      keywordCount[element] += 1;
+    } else {
+      keywordCount[element] = 1;
+    }
+  }
 
-  keyList = _.union(name, role);
-
-  return keyList;
+  return keyList, keywordCount;
 }

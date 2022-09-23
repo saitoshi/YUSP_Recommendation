@@ -4,6 +4,7 @@
 <head>
     <title>YUSP Keyword</title>
 </head>
+<script src="https://d3js.org/d3.v7.min.js"></script>
 
 <body>
     <h2 style="text-align: center; font-weight: bold;">YUSP Keyword Test</h2>
@@ -12,6 +13,12 @@
     <p id="demo"></p>
     <form id="myForm">
         <input type="file" id="csvFile" accept=".csv" />
+
+        <br />
+        <input type="submit" value="Submit" />
+    </form>
+    <form id="tsvForm">
+        <input type="file" id="tsvFile" accept=".tsv" />
         <br />
         <input type="submit" value="Submit" />
     </form>
@@ -39,6 +46,7 @@
 </script>
 <script src="recommendation.js"></script>
 <script src="keywordCSVTest.js"></script>
+
 
 
 </html>
