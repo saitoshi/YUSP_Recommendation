@@ -88,33 +88,43 @@ tsvForm.addEventListener("submit", function (e) {
   const input = tsvFile.files[0];
   const reader = new FileReader();
   const nounList = [];
-  const counts = {};
-
+  let tokenList = [];
+  let sortedCount = [];
+  let counterObj = {};
   reader.onload = function (e) {
     const DICT_PATH = "./dict";
     const text = e.target.result;
     const data2 = tsvToArray2(text);
     let keyList = keywordExtract(data2, keywordList);
-    let tokenList = [];
     let keyText = keyList.toString();
-    console.log(keyText);
+
+    keyText = keyText.replace(/\|/g, "");
+    keyText = keyText.replace(/["']/g, "");
+    keyText = keyText.replace(/,/g, "");
     kuromoji.builder({ dicPath: DICT_PATH }).build((err, tokenizer) => {
       const tokens = tokenizer.tokenize(keyText); // 解析データの取得
       tokens.forEach((token) => {
         tokenList.push(token);
         if (token.pos == "名詞") {
-          nounList.push(token.surface_form);
+          nounList.push(token);
+          //console.log(nounList);
         }
       });
-    });
-    console.log(tokenList);
-    console.log(nounList);
+      for (let token of nounList) {
+        counterObj[token.surface_form] =
+          1 + (counterObj[token.surface_form] || 0);
+      }
+      for (var noun in counterObj) {
+        sortedCount.push([noun, counterObj[noun]]);
+      }
 
-    for (const noun of nounList) {
-      counts[noun] = counts[noun] ? counts[noun] + 1 : 1;
-    }
+      sortedCount.sort(function (a, b) {
+        return b[1] - a[1];
+      });
+    });
   };
-  console.log(counts);
+  delete sortedCount;
+  console.log(sortedCount);
   reader.readAsText(input);
 });
 
@@ -122,7 +132,6 @@ function keywordExtract(arr, keywordList) {
   var nameArray = [];
   for (var i = 0; i < keywordList.length; i++) {
     nameArray.push(_.pluck(arr, keywordList[i]));
-    console.log(nameArray);
   }
   return nameArray;
 }
