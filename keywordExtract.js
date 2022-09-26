@@ -1,8 +1,7 @@
 var keywordList = [];
 
 function userInput() {
-  var userInput = document.getElementById("userInputForm").split(",");
-  return userInput;
+  keyWordList.push(document.getElementById("userInputForm").split(","));
 }
 function tsvToArray(str, delimiter = "\t") {
   const headers = str.slice(0, str.indexOf("\r")).split(delimiter);
@@ -89,6 +88,17 @@ function saveArrayCSV(array) {
 }
 
 function keywordExtract(arr, keywordList) {
+  var nameArray = [];
+  for (var i = 0; i < keywordList.length; i++) {
+    nameArray.push(_.pluck(arr, keywordList[i]));
+    console.log(nameArray);
+  }
+  return nameArray;
+}
+
+function keyWordCount(arr, keyWordList) {
+  let keywordList = ["name", "role"];
+  var keywordCount = {};
   var keyList = [];
   var nameArray;
   for (var i = 0; i < keywordList.length; i++) {
@@ -99,20 +109,15 @@ function keywordExtract(arr, keywordList) {
       console.log(keyList);
     }
   }
-  return keyList;
-}
-
-function keywordCount(arr) {
-  var count = {};
-  for (const element of arr) {
-    if (count[element]) {
-      count[element] += 1;
+  for (const element of keyList) {
+    if (keywordCount[element]) {
+      keywordCount[element] += 1;
     } else {
-      count[element] = 1;
+      keywordCount[element] = 1;
     }
   }
 
-  return count;
+  return keywordCount;
 }
 
 function loadXMLDoc() {

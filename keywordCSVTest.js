@@ -41,7 +41,11 @@ myForm.addEventListener("submit", function (e) {
 
     console.log(data);
     let keyCount = keyWordCount(data);
+    let keyList = keywordExtract(data);
+
+    document.write(JSON.stringify(keyList));
     document.write(JSON.stringify(keyCount));
+    saveArrayCSV(keyList);
   };
 
   reader.readAsText(input);
@@ -49,31 +53,14 @@ myForm.addEventListener("submit", function (e) {
 
 function keywordExtract(arr) {
   let keywordList = ["name", "role"];
-  var keyList = [];
-  var nameArray;
+  var nameArray = [];
   for (var i = 0; i < keywordList.length; i++) {
-    let nameData = _.pluck(arr, keywordList[i]);
-    nameArray = Object.values(nameData);
-    for (var j = 0; j < nameArray.length; j++) {
-      keyList.push(nameArray[j]);
-      console.log(keyList);
-    }
+    nameArray.push(_.pluck(arr, keywordList[i]));
+    console.log(nameArray);
   }
-  return keyList;
+  return nameArray;
 }
 
-function keywordCount(arr) {
-  var count = {};
-  for (const element of arr) {
-    if (count[element]) {
-      count[element] += 1;
-    } else {
-      count[element] = 1;
-    }
-  }
-
-  return count;
-}
 function keyWordCount(arr) {
   let keywordList = ["name", "role"];
   var keywordCount = {};
@@ -96,4 +83,32 @@ function keyWordCount(arr) {
   }
 
   return keywordCount;
+}
+
+// まとめた情報をcsvファイルとして保存
+function saveArrayCSV(array) {
+  // (B) ARRAY TO CSV STRING
+  var csv = "";
+  for (let row of array) {
+    for (let col of row) {
+      csv += col + ",";
+    }
+    csv += "\r\n";
+  }
+
+  // (C) CREATE BLOB OBJECT
+  var myBlob = new Blob([csv], { type: "text/csv" });
+
+  // (D) CREATE DOWNLOAD LINK
+  var url = window.URL.createObjectURL(myBlob);
+  var anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "demo.csv";
+
+  // (E) "FORCE DOWNLOAD"
+  // NOTE: MAY NOT ALWAYS WORK DUE TO BROWSER SECURITY
+  // BETTER TO LET USERS CLICK ON THEIR OWN
+  anchor.click();
+  window.URL.revokeObjectURL(url);
+  anchor.remove();
 }
