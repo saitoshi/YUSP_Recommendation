@@ -87,25 +87,34 @@ tsvForm.addEventListener("submit", function (e) {
   //console.log("Form submitted");
   const input = tsvFile.files[0];
   const reader = new FileReader();
-  const count = {};
+  const nounList = [];
+  const counts = {};
 
   reader.onload = function (e) {
+    const DICT_PATH = "./dict";
     const text = e.target.result;
-    //const data = tsvArray2(text);
     const data2 = tsvToArray2(text);
-    //console.log(data2);
-
     let keyList = keywordExtract(data2, keywordList);
-    console.log(keyList);
+    let tokenList = [];
     let keyText = keyList.toString();
-    kuromoji.builder({ dicPath: "/dict" }).build((err, tokenizer) => {
+    console.log(keyText);
+    kuromoji.builder({ dicPath: DICT_PATH }).build((err, tokenizer) => {
       const tokens = tokenizer.tokenize(keyText); // 解析データの取得
       tokens.forEach((token) => {
-        // 解析結果を順番に取得する
-        console.log(token);
+        tokenList.push(token);
+        if (token.pos == "名詞") {
+          nounList.push(token.surface_form);
+        }
       });
     });
+    console.log(tokenList);
+    console.log(nounList);
+
+    for (const noun of nounList) {
+      counts[noun] = counts[noun] ? counts[noun] + 1 : 1;
+    }
   };
+  console.log(counts);
   reader.readAsText(input);
 });
 
