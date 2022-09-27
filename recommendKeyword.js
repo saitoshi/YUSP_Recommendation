@@ -71,3 +71,10 @@ function keyText(str) {
     return nounList;
   });
 }
+function getFifteen(arr) {
+  let top15 = [];
+  for (let i = 0; i < 15; i++) {
+    top15.push(arr[i]);
+  }
+  return top15;
+}

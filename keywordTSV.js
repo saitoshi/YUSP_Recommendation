@@ -1,11 +1,6 @@
 //@fileName: keywordCSV
 //@description: CSVファイルを読み込み、それをarrayにまとめる
-const keywordList = [
-  "product_name",
-  "product_price",
-  "product_price_tax",
-  "brand_code",
-];
+
 const tsvForm = document.getElementById("tsvForm");
 const tsvFile = document.getElementById("tsvFile");
 
@@ -77,14 +72,8 @@ function tsvToArray(str, delimiter = "\t") {
 tsvForm.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const keywordList = [
-    "product_name",
-    "category_name",
-    "keyword",
-    "brand_code",
-  ];
-
   //console.log("Form submitted");
+
   const input = tsvFile.files[0];
   const reader = new FileReader();
   const nounList = [];
@@ -92,22 +81,22 @@ tsvForm.addEventListener("submit", function (e) {
   let sortedCount = [];
   let counterObj = {};
   reader.onload = function (e) {
+    const keywordList = ["description", "title", "color"];
     const DICT_PATH = "./dict";
     const text = e.target.result;
     const data2 = tsvToArray2(text);
     let keyList = keywordExtract(data2, keywordList);
     let keyText = keyList.toString();
-
-    keyText = keyText.replace(/\|/g, "");
+    keyText = keyText.replace(/\|/g, " ");
     keyText = keyText.replace(/["']/g, "");
-    keyText = keyText.replace(/,/g, "");
+    console.log(keyText);
+    //keyText = keyText.replace(/,/g, "　");
     kuromoji.builder({ dicPath: DICT_PATH }).build((err, tokenizer) => {
       const tokens = tokenizer.tokenize(keyText); // 解析データの取得
       tokens.forEach((token) => {
         tokenList.push(token);
-        if (token.pos == "名詞") {
+        if (token.pos == "名詞" && token.word_id != 80) {
           nounList.push(token);
-          //console.log(nounList);
         }
       });
       for (let token of nounList) {
@@ -121,10 +110,13 @@ tsvForm.addEventListener("submit", function (e) {
       sortedCount.sort(function (a, b) {
         return b[1] - a[1];
       });
+      console.log(nounList);
+      saveArrayCSV(sortedCount);
+      let top15 = getFifteen(sortedCount);
+      console.log(top15);
     });
   };
-  delete sortedCount;
-  console.log(sortedCount);
+
   reader.readAsText(input);
 });
 
@@ -134,4 +126,41 @@ function keywordExtract(arr, keywordList) {
     nameArray.push(_.pluck(arr, keywordList[i]));
   }
   return nameArray;
+}
+
+function getFifteen(arr) {
+  let top15 = [];
+  for (let i = 0; i < 15; i++) {
+    top15.push(arr[i]);
+  }
+  return top15;
+}
+
+function saveCSV(array) {
+  var csv = "";
+  // (B) ARRAY TO CSV STRING
+  csv += "キーワード";
+  csv += "回数";
+  csv += "\r\n";
+  for (let i = 0; i < array.length + 1; i++) {
+    for (let j = 0; j < array[i].length; j++) {
+      csv += array[i][j];
+    }
+    csv += "\r\n";
+  }
+  // (C) CREATE BLOB OBJECT
+  var myBlob = new Blob([csv], { type: "text/csv" });
+
+  // (D) CREATE DOWNLOAD LINK
+  var url = window.URL.createObjectURL(myBlob);
+  var anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "demo.csv";
+
+  // (E) "FORCE DOWNLOAD"
+  // NOTE: MAY NOT ALWAYS WORK DUE TO BROWSER SECURITY
+  // BETTER TO LET USERS CLICK ON THEIR OWN
+  anchor.click();
+  window.URL.revokeObjectURL(url);
+  anchor.remove();
 }
